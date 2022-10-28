@@ -1,30 +1,113 @@
-body{
-  margin-top: 100px;
-  margin-bottom: 100px;
-  margin-right: 150px;
-  margin-left: 30%;
+body {
+  background: #e98484;
 }
 
-div.game {
-    display: grid;
-    width: 50vw;
-    height: 50vh;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    width: 120px;
-    height: 120px
-  }
-  
-  .game-cell {
-    width: 120px;
-    height: 120px;
-    border: 1px solid ;
-    box-sizing: border-box;
-  }
+.container {
+  display: grid;
+  text-align: center;
+  gap: 10px;
+  grid-template-areas: "numPartidas maxPuntos puntos cronometro"
+                       "baraja baraja baraja baraja";
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
 
-  .imagen {
-    width: 120px;
-    height: 120px;
-    border: 1px solid;
-    box-sizing: border-box;
-  }
+:root {
+  --rowNum: 4;
+  --colNum: 4;
+  --gridHeight: 128px;
+  --gridWidht: 128px;
+}
+
+.puntos {    
+  font-family: 'sans-serif';
+  font-size: 30px;
+  text-align: right;
+}
+
+.numPartidas {
+  grid-area: numPartidas;   
+}
+
+.maxPuntos {
+  grid-area: maxPuntos;
+}
+
+.wrapper {
+  grid-area: baraja;
+  display: grid;
+  justify-content: center;
+  grid-template-rows: repeat(var(--rowNum), var(--gridHeight));
+  grid-template-columns: repeat(var(--colNum), var(--gridWidht));
+}
+
+.carta {
+  grid-column-start: auto;
+  grid-row-start: auto; 
+  position: relative;
+  transform-style: preserve-3d;
+  transition: 1s;
+  width: var(--gridWidht);
+  height: var(--gridHeight);
+}
+
+input[type='image'] {
+  background: #e98484;    
+}
+
+.face {
+  position: absolute;
+  width: var(--gridWidht);
+  height: var(--gridHeight);
+}
+
+.back {
+  transform: rotateY(0deg) scale(1);
+  backface-visibility: hidden;
+}
+
+.mostrar {
+  transform: rotateY(180deg) scale(1.12);
+  -ms-transform: rotateY(180deg) scale(1.12); /* IE 9  */
+  -moz-transform: rotateY(180deg) scale(1.12); /* Firefox */
+  -webkit-transform: rotateY(180deg) scale(1.12); /* Safari and Chrome */
+  -o-transform: rotateY(180deg) scale(1.12); /* Opera */
+}
+
+.ocultar {
+  transform: rotateY(0deg) scale(1);
+  -ms-transform: rotateY(0deg) scale(1); /* IE 9  */
+  -moz-transform: rotateY(0deg) scale(1); /* Firefox */
+  -webkit-transform: rotateY(0deg) scale(1); /* Safari and Chrome */
+  -o-transform: rotateY(0deg) scale(1); /* Opera */
+}
+
+.back input[type='image']:hover {    
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.bloquear input[type='image']:hover {
+  border: none;
+  box-shadow: none;
+}
+
+.modal-score-body {
+  display: grid;
+  justify-content: space-around;
+  padding: 2%;
+}
+
+.tabla {
+  grid-auto-flow: column;    
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.footer {
+  margin: 5% 5% 0 10%;
+  gap: 12px;
+}
+
+.titlePtos {
+  font-family: 'good-times';
+  font-size: small;
+}

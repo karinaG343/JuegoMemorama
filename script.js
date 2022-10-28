@@ -1,47 +1,169 @@
-const primerImg = document.getElementById('imagen1'), seguImg = document.getElementById('imagen2'), terImg = document.getElementById('imagen3'), cuaImg = document.getElementById('imagen4',
-quinImg = document.getElementById('imagen5'), sexImg = document.getElementById('imagen6'), sepImg = document.getElementById('imagen7'), octImg = document.getElementById('imagen8'));
-const myTimeout = setTimeout(cambiarImagen, 3000);
+let parejasAcertadas = [];
+let numImgVisibles = 0;
+let puntos = 0;
+let partidaIniciada = false;
+window.onload = grid;
 
-primerImg.addEventListener("click", cambiarImagen);
-seguImg.addEventListener("click", cambiarImagen2);
-terImg.addEventListener("click", cambiarImagen3);
-cuaImg.addEventListener("click", cambiarImagen4);
-quinImg.addEventListener("click", cambiarImagen5);
-sexImg.addEventListener("click", cambiarImagen6);
-sepImg.addEventListener("click", cambiarImagen7);
-octImg.addEventListener("click", cambiarImagen8);
-
-function cambiarImagen() {
-    primerImg.innerHTML = "<img src='img/anabell.jpg' height:'120px' width='120px'>";
-    clearTimeout(myTimeout);
+function grid() {
+	cargarImagenes();
+	generarCartas(4, 8, halloween);
 }
 
-function cambiarImagen2() {
-    seguImg.innerHTML = "<img src='img/bruja.jpg' height:'120px' width='120px'>";
+function generarCartas(columnasFilas, numImg, tematica) {
+	let parentElement = document.getElementById("wrapper");
+	let numElements = columnasFilas * columnasFilas;
+	let listaImagenes = imagenes(numImg, tematica);
+
+	for (let i = 0; i < numElements; i++) {
+		let img = document.createElement('INPUT');
+		img.setAttribute("type", "image");
+		img.setAttribute("class", "imagenCarta");
+		img.setAttribute("visible", false);
+		img.setAttribute("src", listaImagenes[i]);
+		carta(parentElement, img, numImg);
+	}
+
+	parentElement.style.setProperty('--rowNum', columnasFilas);
+	parentElement.style.setProperty('--colNum', columnasFilas);
 }
 
-function cambiarImagen3() {
-    terImg.innerHTML = "<img src='img/catrina.jpg' height:'120px' width='120px'>";
+function carta(contenedor, img, numImg) {
+	let carta = document.createElement('DIV');
+	carta.setAttribute("class", "carta");
+	contenedor.appendChild(carta);
+
+	let front = document.createElement('DIV');
+	front.setAttribute("class", "front face");
+	carta.appendChild(front);
+	front.appendChild(img);
+
+	let back = document.createElement('DIV');
+	back.setAttribute("class", "back face");
+	carta.appendChild(back);
+
+	let imgReverso = document.createElement('INPUT');
+	imgReverso.setAttribute("type", "image");
+	imgReverso.setAttribute("src", "img/reverso.png");
+	back.appendChild(imgReverso);
+
+	carta.onclick = function () {
+		if (img.getAttribute("visible") == "false") {
+			carta.classList.add("mostrar");
+			img.setAttribute("visible", true);
+			numImgVisibles++;
+
+			comprobarParejas();
+
+			if (parejasAcertadas.length == numImg) {
+				 //Función del fichero modalScore.js
+			}
+		}
+	}
 }
 
-function cambiarImagen4() {
-    cuaImg.innerHTML = "<img src='img/chuky.jpg' height:'120px' width='120px'>";
+function imagenes(numImg, tematica) {
+	let imagenes = [];
+	let i = 0;
+	while (i < numImg) {
+		let nuevaImagen = tematica[getAleatorio(tematica)];
+		if (!imagenes.includes(nuevaImagen)) {
+			imagenes[i] = nuevaImagen;
+			i++;
+		}
+	}
+	return mezclarImagenes(imagenes, numImg);
 }
 
-function cambiarImagen5() {
-    quinImg.innerHTML = "<img src='img/it.jpg' height:'120px' width='120px'>";
+function mezclarImagenes(imagenes, numImg) {
+	let baraja = [];
+	baraja.length = numImg * 2;
+
+	let i = 0
+	while (i < baraja.length) {
+		let nuevaImagen = imagenes[getAleatorio(imagenes)];
+		if (!baraja.includes(nuevaImagen) || contarRepeticiones(baraja, nuevaImagen) < 2) {
+			baraja[i] = nuevaImagen;
+			i++;
+		}
+	}
+	return baraja;
 }
 
-function cambiarImagen6() {
-    sexImg.innerHTML = "<img src='img/krueger.jpg' height:'120px' width='120px'>";
+function contarRepeticiones(lista, imagen) {
+	let repeticiones = 0;
+	for (let i = 0; i < lista.length; i++) {
+		if (lista[i] == imagen) {
+			repeticiones++;
+		}
+	}
+	return repeticiones;
 }
 
-function cambiarImagen7() {
-    sepImg.innerHTML = "<img src='img/myers.jpg' height:'120px' width='120px'>";
+function comprobarParejas() {
+	if (numImgVisibles == 2) {
+		bloquearPanel(true);
+
+		let parejas = [];
+		numImgVisibles = 0;
+
+		let imagenes = document.getElementsByClassName("imagenCarta");
+		for (let i = 0; i < imagenes.length; i++) {
+			if (!parejasAcertadas.includes(imagenes[i].getAttribute("src")) & imagenes[i].getAttribute("visible") == "true") {
+				parejas.push(imagenes[i]);
+			}
+		}
+
+		if (parejas[0].getAttribute("src") != parejas[1].getAttribute("src")) {
+			if (puntos != 0) {
+				puntos--;
+			}
+			setTimeout(
+				function () {
+					girarParejas(parejas[0], parejas[1]);
+					setTimeout(function () {
+						bloquearPanel(false);					
+					}, 1000);
+				},
+				1000
+			);
+		}
+		else {
+			parejasAcertadas.push(parejas[0].getAttribute("src"));
+			puntos += 10;
+			bloquearPanel(false);
+			
+		}
+	}
 }
 
-function cambiarImagen8() {
-    octImg.innerHTML = "<img src='img/saw.jpg' height:'120px' width='120px'>";
+function girarParejas(pareja1, pareja2) {
+	pareja1.closest(".carta").classList.remove("mostrar");
+	pareja1.classList.add("ocultar");
+	pareja1.setAttribute("visible", false);
+
+	pareja2.closest(".carta").classList.remove("mostrar");
+	pareja2.classList.add("ocultar");
+	pareja2.setAttribute("visible", false);
 }
 
-setTimeout
+function getAleatorio(tematica) {
+	return Math.floor(Math.random() * (tematica.length - 0));
+}
+
+function bloquearPanel(bloquear) {
+	let tablero = document.getElementById("wrapper");
+	if (bloquear)
+		tablero.classList.add("bloquear");
+	else
+		tablero.classList.remove("bloquear");
+
+	let imagenes = document.getElementsByClassName("imagenCarta");
+	for (let i = 0; i < imagenes.length; i++) {
+		imagenes[i].disabled = bloquear;
+	}
+}
+
+function scorePartida() {
+	let divScore = document.getElementById("puntosValue");
+	divScore.innerHTML = puntos;
+}
