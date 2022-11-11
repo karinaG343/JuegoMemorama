@@ -2,6 +2,7 @@ let parejasAcertadas = [];
 let numImgVisibles = 0;
 let puntos = 0;
 let partidaIniciada = false;
+let numIntentos = 0;
 window.onload = grid;
 
 function grid() {
@@ -19,6 +20,7 @@ function generarCartas(columnasFilas, numImg, tematica) {
 		img.setAttribute("type", "image");
 		img.setAttribute("class", "imagenCarta");
 		img.setAttribute("visible", false);
+		img.setAttribute("par", false);
 		img.setAttribute("src", listaImagenes[i]);
 		carta(parentElement, img, numImg);
 	}
@@ -50,6 +52,7 @@ function carta(contenedor, img, numImg) {
 		if (img.getAttribute("visible") == "false") {
 			carta.classList.add("mostrar");
 			img.setAttribute("visible", true);
+			img.setAttribute("par", false);
 			numImgVisibles++;
 
 			comprobarParejas();
@@ -131,7 +134,9 @@ function comprobarParejas() {
 			parejasAcertadas.push(parejas[0].getAttribute("src"));
 			puntos += 10;
 			bloquearPanel(false);
-			
+			imagenes[0].getAttribute("par") == "true";
+			imagenes[1].getAttribute("par") == "true";
+			console.log("par");
 		}
 	}
 }
@@ -144,6 +149,9 @@ function girarParejas(pareja1, pareja2) {
 	pareja2.closest(".carta").classList.remove("mostrar");
 	pareja2.classList.add("ocultar");
 	pareja2.setAttribute("visible", false);
+	numIntentos++;
+	console.log(numIntentos);
+	document.getElementById('puntosValue').innerHTML = numIntentos;
 }
 
 function getAleatorio(tematica) {

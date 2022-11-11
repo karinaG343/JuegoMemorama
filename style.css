@@ -54,6 +54,10 @@ input[type='image'] {
   background: #e98484;    
 }
 
+input[visible="true"]{
+  box-shadow: 2px 2px 2px 1px rgb(8, 207, 51);
+}
+
 .face {
   position: absolute;
   width: var(--gridWidht);
